@@ -15,6 +15,9 @@ return [
 			'auth' => [
 				'class' => 'app\modules\auth\Module',
 			],
+			'master' => [
+				'class' => 'app\modules\master\Module',
+			],
 		],
     'components' => [
         'user' => [

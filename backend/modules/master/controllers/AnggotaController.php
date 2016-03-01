@@ -1,18 +1,18 @@
 <?php
 
-namespace app\modules\auth\controllers;
+namespace app\modules\master\controllers;
 
 use Yii;
-use app\modules\auth\models\Coba;
-use app\modules\auth\models\CobaSearch;
+use app\modules\master\models\Anggota;
+use app\modules\master\models\AnggotaSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * CobaController implements the CRUD actions for Coba model.
+ * AnggotaController implements the CRUD actions for Anggota model.
  */
-class CobaController extends Controller
+class AnggotaController extends Controller
 {
     public function behaviors()
     {
@@ -27,13 +27,13 @@ class CobaController extends Controller
     }
 
     /**
-     * Lists all Coba models.
+     * Lists all Anggota models.
      * @return mixed
      */
     public function actionIndex()
     {
-        if (\Yii::$app->user->can('indexPost')) {
-			$searchModel = new CobaSearch();
+		if (\Yii::$app->user->can('indexPost')) {
+			$searchModel = new AnggotaSearch();
 			$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
 			return $this->render('index', [
@@ -41,13 +41,14 @@ class CobaController extends Controller
 				'dataProvider' => $dataProvider,
 			]);
 		}else{
-			throw new \Exception('You are not allowed to access this page');
+			return $this->render('error');
+			//throw new \Exception('You are not allowed to access this page');
 		}
-		
+        
     }
 
     /**
-     * Displays a single Coba model.
+     * Displays a single Anggota model.
      * @param integer $id
      * @return mixed
      */
@@ -58,48 +59,49 @@ class CobaController extends Controller
 				'model' => $this->findModel($id),
 			]);
 		}else{
-			throw new \Exception('You are not allowed to access this page');
+			return $this->render('error');
+			//throw new \Exception('You are not allowed to access this page');
 		}
         
     }
 
     /**
-     * Creates a new Coba model.
+     * Creates a new Anggota model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
 		if (\Yii::$app->user->can('createPost')) {
-			$model = new Coba();
+			$model = new Anggota();
 
 			if ($model->load(Yii::$app->request->post()) && $model->save()) {
-				return $this->redirect(['view', 'id' => $model->id]);
+				return $this->redirect(['view', 'id' => $model->id_anggota]);
 			} else {
 				return $this->render('create', [
 					'model' => $model,
 				]);
 			}
 		}else{
-			throw new \Exception('You are not allowed to access this page');
+			return $this->render('error');
+			//throw new \Exception('You are not allowed to access this page');
 		}
         
     }
 
     /**
-     * Updates an existing Coba model.
+     * Updates an existing Anggota model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
      */
     public function actionUpdate($id)
     {
-		
 		if (\Yii::$app->user->can('updatePost')) {
 			$model = $this->findModel($id);
 
 			if ($model->load(Yii::$app->request->post()) && $model->save()) {
-				return $this->redirect(['view', 'id' => $model->id]);
+				return $this->redirect(['view', 'id' => $model->id_anggota]);
 			} else {
 				return $this->render('update', [
 					'model' => $model,
@@ -109,42 +111,38 @@ class CobaController extends Controller
 			return $this->render('error');
 			//throw new \Exception('You are not allowed to access this page');
 		}
-		
         
     }
 
     /**
-     * Deletes an existing Coba model.
+     * Deletes an existing Anggota model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
      */
     public function actionDelete($id)
     {
-		
 		if (\Yii::$app->user->can('deletePost')) {
 			$this->findModel($id)->delete();
 
 			return $this->redirect(['index']);
 		}else{
-			
 			return $this->render('error');
 			//throw new \Exception('You are not allowed to access this page');
 		}
-		
         
     }
 
     /**
-     * Finds the Coba model based on its primary key value.
+     * Finds the Anggota model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Coba the loaded model
+     * @return Anggota the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Coba::findOne($id)) !== null) {
+        if (($model = Anggota::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
