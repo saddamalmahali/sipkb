@@ -17,7 +17,18 @@
         "php": ">=5.4.0",
         "yiisoft/yii2": ">=2.0.6",
         "yiisoft/yii2-bootstrap": "*",
-        "yiisoft/yii2-swiftmailer": "*"
+        "yiisoft/yii2-swiftmailer": "*",
+        "dmstr/yii2-adminlte-asset": "2.*",
+        "kartik-v/yii2-widgets": "dev-master",
+        "wbraganca/yii2-dynamicform": "*",
+		"bower-asset/angular": "*",
+		"bower-asset/angular-route": "*",
+		"bower-asset/angular-strap": "*",
+        "kartik-v/yii2-detail-view": "*",
+		"infobip/infobip-api-php-client": "dev-master",
+        "kartik-v/yii2-grid": "@dev",
+        "kartik-v/yii2-mpdf": "*",
+        "johnitvn/yii2-ajaxcrud": "*"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

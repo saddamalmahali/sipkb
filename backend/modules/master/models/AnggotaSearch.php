@@ -18,8 +18,8 @@ class AnggotaSearch extends Anggota
     public function rules()
     {
         return [
-            [['id_anggota'], 'integer'],
-            [['nama_anggota', 'jenis_kelamin', 'tempat_lahir', 'tanggal_lahir', 'alamat_anggota', 'kecamatan', 'kabupaten', 'no_ktp'], 'safe'],
+            [['id_anggota', 'id_kelompok'], 'integer'],
+            [['nama_anggota', 'jenis_kelamin', 'tempat_lahir', 'tanggal_lahir', 'alamat_anggota', 'kecamatan', 'kabupaten', 'no_ktp', 'status'], 'safe'],
         ];
     }
 
@@ -57,6 +57,7 @@ class AnggotaSearch extends Anggota
 
         $query->andFilterWhere([
             'id_anggota' => $this->id_anggota,
+            'id_kelompok' => $this->id_kelompok,
             'tanggal_lahir' => $this->tanggal_lahir,
         ]);
 
@@ -66,7 +67,8 @@ class AnggotaSearch extends Anggota
             ->andFilterWhere(['like', 'alamat_anggota', $this->alamat_anggota])
             ->andFilterWhere(['like', 'kecamatan', $this->kecamatan])
             ->andFilterWhere(['like', 'kabupaten', $this->kabupaten])
-            ->andFilterWhere(['like', 'no_ktp', $this->no_ktp]);
+            ->andFilterWhere(['like', 'no_ktp', $this->no_ktp])
+            ->andFilterWhere(['like', 'status', $this->status]);
 
         return $dataProvider;
     }

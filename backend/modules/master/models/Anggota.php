@@ -3,11 +3,13 @@
 namespace app\modules\master\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "anggota".
  *
  * @property integer $id_anggota
+ * @property integer $id_kelompok
  * @property string $nama_anggota
  * @property string $jenis_kelamin
  * @property string $tempat_lahir
@@ -16,6 +18,8 @@ use Yii;
  * @property string $kecamatan
  * @property string $kabupaten
  * @property string $no_ktp
+ *
+ * @property AnggotaDetile[] $anggotaDetiles
  */
 class Anggota extends \yii\db\ActiveRecord
 {
@@ -33,7 +37,8 @@ class Anggota extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nama_anggota', 'jenis_kelamin', 'tempat_lahir', 'tanggal_lahir', 'alamat_anggota', 'kecamatan', 'kabupaten', 'no_ktp'], 'required'],
+            [['id_kelompok', 'nama_anggota', 'jenis_kelamin', 'tempat_lahir', 'tanggal_lahir', 'alamat_anggota', 'kecamatan', 'kabupaten', 'no_ktp'], 'required'],
+            [['id_kelompok'], 'integer'],
             [['jenis_kelamin'], 'string'],
             [['tanggal_lahir'], 'safe'],
             [['nama_anggota'], 'string', 'max' => 255],
@@ -50,6 +55,7 @@ class Anggota extends \yii\db\ActiveRecord
     {
         return [
             'id_anggota' => 'Id Anggota',
+            'id_kelompok' => 'Id Kelompok',
             'nama_anggota' => 'Nama Anggota',
             'jenis_kelamin' => 'Jenis Kelamin',
             'tempat_lahir' => 'Tempat Lahir',
@@ -59,5 +65,19 @@ class Anggota extends \yii\db\ActiveRecord
             'kabupaten' => 'Kabupaten',
             'no_ktp' => 'No Ktp',
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getAnggotaDetiles()
+    {
+        return $this->hasMany(AnggotaDetile::className(), ['id_anggota' => 'id_anggota']);
+    }
+
+    public function getListKecamatan(){
+        $datakecamatan = Kecamatan::find()->asArray()->where(['IDKabupaten'=>27714])->orderBy(['Nama'=>'SORT_ASC'])->all();
+
+        return ArrayHelper::map($datakecamatan, 'IDKecamatan', 'Nama');
     }
 }
