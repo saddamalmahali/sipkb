@@ -43,6 +43,8 @@ class KelompokWilayahSearch extends KelompokWilayah
     {
         $query = KelompokWilayah::find();
 
+        // add conditions that should always apply here
+
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -55,6 +57,7 @@ class KelompokWilayahSearch extends KelompokWilayah
             return $dataProvider;
         }
 
+        // grid filtering conditions
         $query->andFilterWhere([
             'id_kelompok' => $this->id_kelompok,
         ]);

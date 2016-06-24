@@ -11,7 +11,7 @@ use yii\widgets\DetailView;
         'model' => $model,
         'attributes' => [
             'id_anggota',
-            'id_kelompok',
+            //'id_kelompok',
             'nama_anggota',
             'jenis_kelamin',
             'tempat_lahir',

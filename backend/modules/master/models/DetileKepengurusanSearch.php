@@ -15,10 +15,16 @@ class DetileKepengurusanSearch extends DetileKepengurusan
     /**
      * @inheritdoc
      */
+
+    public $alamat;
+    public $anak_cabang;
+    public $periode;
+
     public function rules()
     {
         return [
-            [['id', 'id_kepengurusan', 'id_anggota'], 'integer'],
+            [['id', 'id_kepengurusan',], 'integer'],
+            [['jabatan',  'periode','alamat', 'id_anggota', 'anak_cabang'], 'safe'],
         ];
     }
 
@@ -42,8 +48,11 @@ class DetileKepengurusanSearch extends DetileKepengurusan
     {
         $query = DetileKepengurusan::find();
 
+        // add conditions that should always apply here
+
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort'=>false, 
         ]);
 
         $this->load($params);
@@ -54,11 +63,17 @@ class DetileKepengurusanSearch extends DetileKepengurusan
             return $dataProvider;
         }
 
-        $query->andFilterWhere([
-            'id' => $this->id,
-            'id_kepengurusan' => $this->id_kepengurusan,
-            'id_anggota' => $this->id_anggota,
-        ]);
+        $query->joinWith('idAnggota');
+        $query->joinWith('idKepengurusan');
+
+        // grid filtering conditions
+        
+
+        $query->andFilterWhere(['like', 'jabatan', $this->jabatan])
+                ->andFilterWhere(['like', 'anggota.nama_anggota', $this->id_anggota])
+                ->andFilterWhere(['like', 'anggota.alamat_anggota', $this->alamat])
+                ->andFilterWhere(['like', 'kepengurusan_anak_cabang.periode', $this->periode])
+                ->andFilterWhere(['like', 'id_kepengurusan', $this->id_kepengurusan]);
 
         return $dataProvider;
     }

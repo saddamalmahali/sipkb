@@ -38,7 +38,7 @@ CrudAsset::register($this);
             'condensed' => true,
             'responsive' => true,          
             'panel' => [
-                'type' => 'primary', 
+                'type' => 'success', 
                 'heading' => '<i class="glyphicon glyphicon-list"></i>  '.$this->title,
                 
                 'after'=>BulkButtonWidget::widget([
@@ -60,6 +60,9 @@ CrudAsset::register($this);
 </div>
 <?php Modal::begin([
     "id"=>"ajaxCrudModal",
+    'options'=>[
+        'tabindex'=>false,
+    ],
     "footer"=>"",// always need it for jquery plugin
 ])?>
 <?php Modal::end(); ?>

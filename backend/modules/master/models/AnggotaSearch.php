@@ -15,11 +15,13 @@ class AnggotaSearch extends Anggota
     /**
      * @inheritdoc
      */
+
+    public $kontak;
     public function rules()
     {
         return [
             [['id_anggota', 'id_kelompok'], 'integer'],
-            [['nama_anggota', 'jenis_kelamin', 'tempat_lahir', 'tanggal_lahir', 'alamat_anggota', 'kecamatan', 'kabupaten', 'no_ktp', 'status'], 'safe'],
+            [['nama_anggota', 'jenis_kelamin', 'tempat_lahir', 'tanggal_lahir', 'alamat_anggota', 'kecamatan', 'kabupaten', 'no_ktp', 'status', 'kontak'], 'safe'],
         ];
     }
 
@@ -45,6 +47,7 @@ class AnggotaSearch extends Anggota
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort'=>false,
         ]);
 
         $this->load($params);
@@ -54,6 +57,8 @@ class AnggotaSearch extends Anggota
             // $query->where('0=1');
             return $dataProvider;
         }
+
+        $query->joinWith('anggotaDetile');
 
         $query->andFilterWhere([
             'id_anggota' => $this->id_anggota,
@@ -68,7 +73,8 @@ class AnggotaSearch extends Anggota
             ->andFilterWhere(['like', 'kecamatan', $this->kecamatan])
             ->andFilterWhere(['like', 'kabupaten', $this->kabupaten])
             ->andFilterWhere(['like', 'no_ktp', $this->no_ktp])
-            ->andFilterWhere(['like', 'status', $this->status]);
+            ->andFilterWhere(['like', 'status', $this->status])
+            ->andFilterWhere(['like', 'detile_kontak.no_hp', $this->kontak]);
 
         return $dataProvider;
     }

@@ -28,10 +28,11 @@
 		"infobip/infobip-api-php-client": "dev-master",
         "kartik-v/yii2-grid": "@dev",
         "kartik-v/yii2-mpdf": "*",
-        "johnitvn/yii2-ajaxcrud": "*"
+        "johnitvn/yii2-ajaxcrud": "*",
+        "yiisoft/yii2-codeception": "^2.0",
+        "codeception/codeception": "2.1.*"
     },
     "require-dev": {
-        "yiisoft/yii2-codeception": "*",
         "yiisoft/yii2-debug": "*",
         "yiisoft/yii2-gii": "*",
         "yiisoft/yii2-faker": "*"

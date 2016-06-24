@@ -10,8 +10,6 @@ use Yii;
  * @property integer $id_kelompok
  * @property string $kode_kelompok
  * @property string $nama_kelompok
- *
- * @property AnakCabang[] $anakCabangs
  */
 class KelompokWilayah extends \yii\db\ActiveRecord
 {
@@ -31,7 +29,8 @@ class KelompokWilayah extends \yii\db\ActiveRecord
         return [
             [['kode_kelompok', 'nama_kelompok'], 'required'],
             [['kode_kelompok'], 'string', 'max' => 40],
-            [['nama_kelompok'], 'string', 'max' => 100]
+            ['kode_kelompok', 'unique', 'message'=>'Kode Kelompok Sudah ada didalam database'],
+            [['nama_kelompok'], 'string', 'max' => 100],
         ];
     }
 
@@ -45,13 +44,5 @@ class KelompokWilayah extends \yii\db\ActiveRecord
             'kode_kelompok' => 'Kode Kelompok',
             'nama_kelompok' => 'Nama Kelompok',
         ];
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getAnakCabangs()
-    {
-        return $this->hasMany(AnakCabang::className(), ['id_kelompok' => 'id_kelompok']);
     }
 }

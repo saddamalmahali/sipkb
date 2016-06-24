@@ -16,6 +16,7 @@
                         ['label' => 'Anak Cabang', 'icon' => 'fa fa-building', 'url' => ['#'], 'items'=>[
                             ['label' => 'Data Anak Cabang', 'icon' => 'fa fa-street-view', 'url' => ['/master/anak-cabang']],
                             ['label' => 'Pengurus Anak Cabang', 'icon' => 'fa fa-tags', 'url' => ['/master/kepengurusan-anak-cabang']],
+                            ['label' => 'Detile Kepengurusan', 'icon' => 'fa fa-tags', 'url' => ['/master/detile-kepengurusan']],
                         ]],
 						['label' => 'Anggota', 'icon' => 'fa fa-user', 'url' => ['/master/anggota']],
 						

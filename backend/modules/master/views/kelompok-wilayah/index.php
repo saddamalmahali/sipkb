@@ -1,10 +1,9 @@
 <?php
-use yii\helpers\Url;
+
 use yii\helpers\Html;
-use yii\bootstrap\Modal;
 use kartik\grid\GridView;
-use johnitvn\ajaxcrud\CrudAsset; 
-use johnitvn\ajaxcrud\BulkButtonWidget;
+use yii\bootstrap\Modal;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\modules\master\models\KelompokWilayahSearch */
@@ -12,54 +11,71 @@ use johnitvn\ajaxcrud\BulkButtonWidget;
 
 $this->title = 'Kelompok Wilayahs';
 $this->params['breadcrumbs'][] = $this->title;
-
-CrudAsset::register($this);
-
 ?>
 <div class="kelompok-wilayah-index">
-    <div id="ajaxCrudDatatable">
-        <?=GridView::widget([
-            'id'=>'crud-datatable',
-            'dataProvider' => $dataProvider,
-            'filterModel' => $searchModel,
-            'pjax'=>true,
-            'columns' => require(__DIR__.'/_columns.php'),
-            'toolbar'=> [
-                ['content'=>
-                    Html::a('<i class="glyphicon glyphicon-plus"></i>', ['create'],
-                    ['role'=>'modal-remote','title'=> 'Create new Kelompok Wilayahs','class'=>'btn btn-default']).
-                    Html::a('<i class="glyphicon glyphicon-repeat"></i>', [''],
-                    ['data-pjax'=>1, 'class'=>'btn btn-default', 'title'=>'Reset Grid']).
-                    '{toggleData}'.
-                    '{export}'
+    <?php 
+        Modal::begin([
+            'id'=>'modal-wilayah',
+            'header' => '<h2>Hello world</h2>',
+        ]);
+    ?>
+    <div class='modal-wilayah-body'></div>
+    <?php Modal::end(); ?>
+
+  
+            <?= GridView::widget([
+                'pjax'=>true,
+                'pjaxSettings'=>[
+                    'options'=>[
+                        'id'=>'grid-kelompok-wilayah',
+                    ],
                 ],
-            ],          
-            'striped' => true,
-            'condensed' => true,
-            'responsive' => true,          
-            'panel' => [
-                'type' => 'primary', 
-                'heading' => '<i class="glyphicon glyphicon-list"></i>  '.$this->title,
-                
-                'after'=>BulkButtonWidget::widget([
-                            'buttons'=>Html::a('<i class="glyphicon glyphicon-trash"></i>&nbsp; Delete All',
-                                ["bulk-delete"] ,
-                                [
-                                    "class"=>"btn btn-danger btn-xs",
-                                    'role'=>'modal-remote-bulk',
-                                    'data-confirm'=>false, 'data-method'=>false,// for overide yii data api
-                                    'data-request-method'=>'post',
-                                    'data-confirm-title'=>'Are you sure?',
-                                    'data-confirm-message'=>'Are you sure want to delete this item'
-                                ]),
-                        ]).                        
-                        '<div class="clearfix"></div>',
-            ]
-        ])?>
-    </div>
+                'panel'=>[
+                    'type'=>'success',
+                    'heading'=>$this->title,
+                    'before'=> '<div class="pull-right">'.Html::button('<span class="fa fa-plus"></span>', ['value'=>Url::to('./kelompok-wilayah/create'),'class' => 'btn btn-success button-tambah',]).'</div>',
+                ],
+                'dataProvider' => $dataProvider,
+                'filterModel' => $searchModel,
+                'columns' => [
+                    ['class' => 'yii\grid\SerialColumn'],
+
+                    //'id_kelompok',
+                    [
+                        'attribute'=>'kode_kelompok',
+                        'hAlign'=>'center'
+
+                    ],
+                    [
+                        'attribute'=>'nama_kelompok',
+                        'hAlign'=>'center'
+
+                    ],
+
+                    [
+                        'class' => 'kartik\grid\ActionColumn',
+                        'hAlign'=> 'center'
+                    ],
+                ],
+            ]); ?>
+
+    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+
+    
+    
 </div>
-<?php Modal::begin([
-    "id"=>"ajaxCrudModal",
-    "footer"=>"",// always need it for jquery plugin
-])?>
-<?php Modal::end(); ?>
+
+<?php 
+
+    $js = <<< JS
+    $(document).on('click', '.button-tambah', function(e){
+        e.preventDefault();
+
+        $('#modal-wilayah').modal('show').find('.modal-wilayah-body')
+                    .load($(this).attr('value'));
+    });
+JS;
+    $this->registerJs($js);
+
+
+?>

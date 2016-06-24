@@ -7,8 +7,14 @@ use yii\helpers\Html;
 ?>
 <div class="anggota-update">
 
-    <?= $this->render('_form', [
+    <?= $this->render('_form_update', [
         'model' => $model,
+        'listKecamatan'=>$listKecamatan,
+        'detile_kontak'=>$detile_kontak,
+        'detile_kepengurusan'=>$detile_kepengurusan,
+        'listPac'=>$listPac,
+        'listAnggota'=>$listAnggota,
+        'listKep'=>$listKep,
     ]) ?>
 
 </div>

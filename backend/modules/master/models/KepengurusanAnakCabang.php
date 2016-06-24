@@ -40,7 +40,8 @@ class KepengurusanAnakCabang extends \yii\db\ActiveRecord
             [['id_anak_cabang'], 'integer'],
             [['periode'], 'string', 'max' => 50],
             [['foto'], 'file', 'extensions'=>'jpg, jpeg, png'],
-            [['no_sk', 'tanggal_sk', 'berlaku_sk', 'file_sk'], 'string', 'max' => 45]
+            [['tanggal_sk', 'berlaku_sk',], 'safe'],
+            [['no_sk',  'file_sk'], 'string', 'max' => 45]
         ];
     }
 

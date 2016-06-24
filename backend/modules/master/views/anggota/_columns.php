@@ -10,14 +10,7 @@ return [
         'class' => 'kartik\grid\SerialColumn',
         'width' => '30px',
     ],
-        [
-        'class'=>'\kartik\grid\DataColumn',
-        'attribute'=>'id_anggota',
-    ],
-    [
-        'class'=>'\kartik\grid\DataColumn',
-        'attribute'=>'id_kelompok',
-    ],
+        
     [
         'class'=>'\kartik\grid\DataColumn',
         'attribute'=>'nama_anggota',
@@ -25,10 +18,31 @@ return [
     [
         'class'=>'\kartik\grid\DataColumn',
         'attribute'=>'jenis_kelamin',
+        'hAlign'=>'center'
     ],
     [
         'class'=>'\kartik\grid\DataColumn',
         'attribute'=>'tempat_lahir',
+        'hAlign'=>'center'
+    ],
+
+    [
+        'class'=>'\kartik\grid\DataColumn',
+        'attribute'=>'alamat_anggota',
+        'hAlign'=>'center'
+    ],
+
+    [
+        'class'=>'\kartik\grid\DataColumn',
+        'attribute'=>'kontak',
+        'value'=> function($model){
+            $kontak = $model->getAnggotaDetile()->one();
+
+
+
+            return $kontak != null ? $kontak->no_hp: "Kosong";
+        },
+        'hAlign'=>'center'
     ],
     // [
         // 'class'=>'\kartik\grid\DataColumn',

@@ -1,65 +1,84 @@
 <?php
-use yii\helpers\Url;
+
 use yii\helpers\Html;
-use yii\bootstrap\Modal;
 use kartik\grid\GridView;
-use johnitvn\ajaxcrud\CrudAsset; 
-use johnitvn\ajaxcrud\BulkButtonWidget;
+use yii\helpers\Url;
+use yii\bootstrap\Modal;
+use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\modules\master\models\DetileKepengurusanSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Detile Kepengurusans';
+$this->title = 'Detile Kepengurusan Anak Cabang';
 $this->params['breadcrumbs'][] = $this->title;
-
-CrudAsset::register($this);
-
 ?>
 <div class="detile-kepengurusan-index">
-    <div id="ajaxCrudDatatable">
-        <?=GridView::widget([
-            'id'=>'crud-datatable',
-            'dataProvider' => $dataProvider,
-            'filterModel' => $searchModel,
-            'pjax'=>true,
-            'columns' => require(__DIR__.'/_columns.php'),
-            'toolbar'=> [
-                ['content'=>
-                    Html::a('<i class="glyphicon glyphicon-plus"></i>', ['create'],
-                    ['role'=>'modal-remote','title'=> 'Create new Detile Kepengurusans','class'=>'btn btn-default']).
-                    Html::a('<i class="glyphicon glyphicon-repeat"></i>', [''],
-                    ['data-pjax'=>1, 'class'=>'btn btn-default', 'title'=>'Reset Grid']).
-                    '{toggleData}'.
-                    '{export}'
-                ],
-            ],          
-            'striped' => true,
-            'condensed' => true,
-            'responsive' => true,          
-            'panel' => [
-                'type' => 'primary', 
-                'heading' => '<i class="glyphicon glyphicon-list"></i> Detile Kepengurusans listing',
-                'before'=>'<em>* Resize table columns just like a spreadsheet by dragging the column edges.</em>',
-                'after'=>BulkButtonWidget::widget([
-                            'buttons'=>Html::a('<i class="glyphicon glyphicon-trash"></i>&nbsp; Delete All',
-                                ["bulk-delete"] ,
-                                [
-                                    "class"=>"btn btn-danger btn-xs",
-                                    'role'=>'modal-remote-bulk',
-                                    'data-confirm'=>false, 'data-method'=>false,// for overide yii data api
-                                    'data-request-method'=>'post',
-                                    'data-confirm-title'=>'Are you sure?',
-                                    'data-confirm-message'=>'Are you sure want to delete this item'
-                                ]),
-                        ]).                        
-                        '<div class="clearfix"></div>',
-            ]
-        ])?>
-    </div>
+
+    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+
+    <?php 
+        Modal::begin([
+            'id'=>'modal-wilayah',
+            'header' => '<h2>Hello world</h2>',
+            'options'=>[
+                'tabindex'=>false,
+            ],
+
+        ]);
+    ?>
+    <div class='modal-wilayah-body'></div>
+    <?php Modal::end(); ?>
+
+    <?php Pjax::begin(); ?>
+    <?= GridView::widget([
+        'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
+        'panel'=>[
+            'heading'=>'<center><b>'.$this->title.'</b></center>',
+            'before'=>'<div class="col-md-6 pull-left">'.$this->render('_search', ['model' => $searchModel]).'</div>'.'<div class="pull-right">'.Html::button('<span class="fa fa-plus"></span>', ['value'=>Url::to(['/master/detile-kepengurusan/create']),'class' => 'btn btn-success button-tambah',]).'</div>',
+        ],
+
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
+
+            //'id',
+
+            
+            [
+                'attribute'=>'id_anggota',
+                'value'=>'idAnggota.nama_anggota',
+                'hAlign'=>'center',
+            ],
+            [
+                'attribute'=>'alamat',
+                'value'=>'idAnggota.alamat_anggota',
+                'hAlign'=>'center',
+            ],
+            [
+                'attribute'=> 'jabatan',
+                'hAlign'=>'center',
+            ],
+
+            ['class' => 'yii\grid\ActionColumn'],
+        ],
+    ]); ?>
+
+    <?php Pjax::end() ?>
 </div>
-<?php Modal::begin([
-    "id"=>"ajaxCrudModal",
-    "footer"=>"",// always need it for jquery plugin
-])?>
-<?php Modal::end(); ?>
+<?php 
+
+    $js = <<< JS
+    $(document).on('click', '.button-tambah', function(e){
+        e.preventDefault();
+
+        $('#modal-wilayah').find('.modal-header').html('<center><h4>Tambah Pengurus</h4></center>');
+
+        $('#modal-wilayah').modal('show').find('.modal-wilayah-body')
+                    .load($(this).attr('value'));
+    });
+JS;
+    $this->registerJs($js);
+
+
+?>

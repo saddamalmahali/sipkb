@@ -4,6 +4,7 @@ namespace app\modules\master\controllers;
 
 use Yii;
 use app\modules\master\models\KepengurusanAnakCabang;
+use app\modules\master\models\ModelMaster;
 use app\modules\master\models\DetileKepengurusan;
 use app\modules\master\models\KepengurusanAnakCabangSearch;
 use app\models\Model;

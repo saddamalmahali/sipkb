@@ -4,6 +4,8 @@ namespace app\modules\master\models;
 
 use Yii;
 use yii\helpers\ArrayHelper;
+use app\modules\master\models\KepengurusanAnakCabang;
+use yii\db\Expression;
 /**
  * This is the model class for table "anak_cabang".
  *
@@ -96,5 +98,20 @@ class AnakCabang extends \yii\db\ActiveRecord
         $dataKecamatan = Kecamatan::find()->where(['IDKabupaten'=>27714])->orderBy(['Nama'=>'ASC'])->all();
 
         return ArrayHelper::map($dataKecamatan, 'IDKecamatan', 'Nama');
+    }
+
+    public function getKepengurusan($id){
+
+        $tanggal = date('Y-m-d');
+
+        $model = KepengurusanAnakCabang::find()->where(['id_anak_cabang'=> $id])->andWhere(['>=','berlaku_sk', new Expression('NOW()')])->all();
+
+        return ArrayHelper::toArray($model, [
+                    'app\modules\master\models\KepengurusanAnakCabang'=>[
+                        'id'=>'id', 
+
+                        'name'=>'periode'
+                    ]
+                ]);
     }
 }

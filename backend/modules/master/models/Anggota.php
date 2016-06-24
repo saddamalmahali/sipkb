@@ -37,7 +37,7 @@ class Anggota extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_kelompok', 'nama_anggota', 'jenis_kelamin', 'tempat_lahir', 'tanggal_lahir', 'alamat_anggota', 'kecamatan', 'kabupaten', 'no_ktp'], 'required'],
+            [[ 'nama_anggota', 'jenis_kelamin', 'tempat_lahir', 'tanggal_lahir', 'alamat_anggota', 'kecamatan',  'no_ktp'], 'required'],
             [['id_kelompok'], 'integer'],
             [['jenis_kelamin'], 'string'],
             [['tanggal_lahir'], 'safe'],
@@ -70,14 +70,31 @@ class Anggota extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getAnggotaDetiles()
-    {
-        return $this->hasMany(AnggotaDetile::className(), ['id_anggota' => 'id_anggota']);
-    }
+    
 
     public function getListKecamatan(){
         $datakecamatan = Kecamatan::find()->asArray()->where(['IDKabupaten'=>27714])->orderBy(['Nama'=>'SORT_ASC'])->all();
 
         return ArrayHelper::map($datakecamatan, 'IDKecamatan', 'Nama');
+    }
+
+    public function getAnggotaDetile()
+    {
+        return $this->hasOne(DetileKontak::className(), ['id_anggota' => 'id_anggota']);
+    }
+
+    public function getDetileKepengurusan($id){
+        $model = DetileKepengurusan::find()->where(['id_kepengurusan'=>$id])->one();
+
+        return $model;
+    }
+
+    public function getListKepengurusan($id){
+        $time = new \DateTime('now');
+        $today = $time->format('Y-m-d'); 
+        $kep = KepengurusanAnakCabang::find()->where(['id_anak_cabang'=>$id])
+        ->andWhere(['>=', 'berlaku_sk', $today])->all();
+
+        return ArrayHelper::map($kep, 'id', 'periode');
     }
 }
