@@ -15,5 +15,7 @@ use yii\helpers\Html;
         'detile_kepengurusan'=>$detile_kepengurusan,
         'listPac'=>$listPac,
         'listAnggota'=>$listAnggota,
+		'detile_kepengurusan_dpc'=>$detile_kepengurusan_dpc,
+		'listKepengurusanDpc'=>$listKepengurusanDpc,
     ]) ?>
 </div>

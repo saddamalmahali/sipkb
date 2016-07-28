@@ -26,6 +26,15 @@ class Anggota extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
+	
+	const TINGKAT_KEP_OPT_DPC  = 1;
+	const TINGKAT_KEP_OPT_PAC  = 2;
+	const TINGKAT_KEP_OPT_RANTING  = 3;
+	
+	public $tingkatKepengurusanOptions;
+	
+	public $file;
+	 
     public static function tableName()
     {
         return 'anggota';
@@ -39,9 +48,11 @@ class Anggota extends \yii\db\ActiveRecord
         return [
             [[ 'nama_anggota', 'jenis_kelamin', 'tempat_lahir', 'tanggal_lahir', 'alamat_anggota', 'kecamatan',  'no_ktp'], 'required'],
             [['id_kelompok'], 'integer'],
+			['tingkatKepengurusanOptions', 'in', 'range'=>array_keys($this->getTingkatKepengurusanOptions())],
             [['jenis_kelamin'], 'string'],
             [['tanggal_lahir'], 'safe'],
-            [['nama_anggota'], 'string', 'max' => 255],
+			[['file'], 'file'],
+            [['nama_anggota', 'foto'], 'string', 'max' => 255],
             [['tempat_lahir', 'kecamatan', 'kabupaten'], 'string', 'max' => 100],
             [['alamat_anggota'], 'string', 'max' => 1024],
             [['no_ktp'], 'string', 'max' => 30]
@@ -55,6 +66,7 @@ class Anggota extends \yii\db\ActiveRecord
     {
         return [
             'id_anggota' => 'Id Anggota',
+			'tingkatKepengurusanOptions'=>'Pilih Tingkat Kepengurusan', 
             'id_kelompok' => 'Id Kelompok',
             'nama_anggota' => 'Nama Anggota',
             'jenis_kelamin' => 'Jenis Kelamin',
@@ -66,6 +78,16 @@ class Anggota extends \yii\db\ActiveRecord
             'no_ktp' => 'No Ktp',
         ];
     }
+	
+	public function getTingkatKepengurusanOptions(){
+		
+		return [
+			self::TINGKAT_KEP_OPT_DPC => 'DPC',
+			self::TINGKAT_KEP_OPT_PAC => 'PAC', 
+			self::TINGKAT_KEP_OPT_RANTING => 'RANTING',
+		];
+		
+	}
 
     /**
      * @return \yii\db\ActiveQuery
@@ -80,11 +102,18 @@ class Anggota extends \yii\db\ActiveRecord
 
     public function getAnggotaDetile()
     {
+		
         return $this->hasOne(DetileKontak::className(), ['id_anggota' => 'id_anggota']);
     }
 
+    public function getIdDetileKepengurusan()
+    {
+        
+        return $this->hasOne(DetileKepengurusan::className(), ['id_anggota' => 'id_anggota']);
+    }
+
     public function getDetileKepengurusan($id){
-        $model = DetileKepengurusan::find()->where(['id_kepengurusan'=>$id])->one();
+        $model = DetileKepengurusan::find()->where(['id_anggota'=>$id])->one();
 
         return $model;
     }
@@ -97,4 +126,20 @@ class Anggota extends \yii\db\ActiveRecord
 
         return ArrayHelper::map($kep, 'id', 'periode');
     }
+	
+	public function getListKepengurusanDpc(){
+		$time = new \DateTime('now');
+        $today = $time->format('Y-m-d'); 
+		$model = KepengurusanDpc::find()->where(['>=', 'berlaku_sk', $today])->all();
+		
+		return ArrayHelper::map($model, 'id', 'periode');
+	}
+	
+	public function getKecamatan($id){
+		if (($model = Kecamatan::find()->where(['IDKecamatan'=>$id])->one()) !== null) {
+            return $model->Nama;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+	}
 }

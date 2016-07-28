@@ -40,7 +40,6 @@ use kartik\widgets\Select2;
         <div class="col-md-6">
             <?= $form->field($model, 'keterangan')->textArea(['rows' => 6]) ?>           
 
-            <?= $form->field($model, 'filefoto')->fileInput() ?>
 
             <?= $form->field($model, 'aktif')->checkbox() ?>
         </div>        

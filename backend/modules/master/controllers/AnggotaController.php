@@ -4,15 +4,21 @@ namespace app\modules\master\controllers;
 
 use Yii;
 use app\modules\master\models\Anggota;
+use app\modules\master\models\KepengurusanDpc;
+use app\modules\master\models\DetileKepengurusanDpc;
 use app\modules\master\models\DetileKontak;
 use app\modules\master\models\AnggotaSearch;
 use app\modules\master\models\DetileKepengurusan;
+use app\modules\master\models\AnakCabang;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use \yii\web\Response;
 use yii\helpers\Html;
 use yii\db\Transaction;
+use yii\web\UploadedFile;
+use common\models\Outbox;
+use app\models\FormSms;
 
 /**
  * AnggotaController implements the CRUD actions for Anggota model.
@@ -59,19 +65,23 @@ class AnggotaController extends Controller
     public function actionView($id)
     {   
         $request = Yii::$app->request;
+		$model = $this->findModel($id);
+        $detile_kontak= $model->getAnggotaDetile()->one();
         if($request->isAjax){
             Yii::$app->response->format = Response::FORMAT_JSON;
             return [
                     'title'=> "Anggota #".$id,
+					'size'=>'large',
                     'content'=>$this->renderAjax('view', [
-                        'model' => $this->findModel($id),
+                        'model' => $model,
+                        'detile_kontak'=>$detile_kontak,
                     ]),
                     'footer'=> Html::button('Close',['class'=>'btn btn-default pull-left','data-dismiss'=>"modal"]).
                             Html::a('Edit',['update','id'=>$id],['class'=>'btn btn-primary','role'=>'modal-remote'])
                 ];    
         }else{
             return $this->render('view', [
-                'model' => $this->findModel($id),
+                'model' => $model,
             ]);
         }
     }
@@ -86,20 +96,27 @@ class AnggotaController extends Controller
     {
         $request = Yii::$app->request;
         $model = new Anggota();  
+		$model->tingkatKepengurusanOptions = Anggota::TINGKAT_KEP_OPT_DPC;
         $listKecamatan = $model->getListKecamatan();
         $detile_kontak = new DetileKontak();
         $detile_kepengurusan = new DetileKepengurusan();
         $listPac = $detile_kepengurusan->getListPac();
         $listAnggota = $detile_kepengurusan->getListAnggota();
+		$listKepengurusanDpc = $model->getListKepengurusanDpc();
+		$detile_kepengurusan_dpc = new DetileKepengurusanDpc();
 
         if($request->isAjax){
+			
             /*
             *   Process for ajax request
             */
+			
+			$model->file = 'file-upload/f3.png';
             Yii::$app->response->format = Response::FORMAT_JSON;
             if($request->isGet){
                 return [
                     'title'=> '<center><b>Tambah Anggota</b></center>',
+					'size'=>'large',
                     'content'=>$this->renderAjax('create', [
                         'model' => $model,
                         'listKecamatan'=>$listKecamatan,
@@ -107,34 +124,81 @@ class AnggotaController extends Controller
                         'detile_kepengurusan'=>$detile_kepengurusan,
                         'listPac'=>$listPac,
                         'listAnggota'=>$listAnggota,
+						'detile_kepengurusan_dpc'=>$detile_kepengurusan_dpc,
+						'listKepengurusanDpc'=>$listKepengurusanDpc,
                     ]),
                     'footer'=> Html::button('Close',['class'=>'btn btn-default pull-left','data-dismiss'=>"modal"]).
                                 Html::button('Save',['class'=>'btn btn-primary','type'=>"submit"])
         
                 ];         
-            }else if($model->load($request->post()) && $detile_kontak->load($request->post()) && $detile_kepengurusan->load($request->post())){
-
+            }else if($model->load($request->post()) && $detile_kontak->load($request->post())){
+				
                 $Transaction = Yii::$app->db->beginTransaction();
                 try{
-                    if($model->save()){
-                        $detile_kontak->id_anggota = $model->id_anggota;
-                        $detile_kontak->save();
+					if($model->tingkatKepengurusanOptions == Anggota::TINGKAT_KEP_OPT_DPC){
+						$detile_kepengurusan_dpc->load($request->post());
+						
+						$nama_foto = $model->no_ktp;
+						$model->file = UploadedFile::getInstance($model, 'file');
+						$model->file->saveAs('file-upload/'.$nama_foto.'.'.$model->file->extension);
+						$model->foto = 'file-upload/'.$nama_foto.'.'.$model->file->extension;
+						
+						if($model->save()){
+							$detile_kontak->id_anggota = $model->id_anggota;
+                            $no_hp = substr($detile_kontak->no_hp, 1);
+                            $detile_kontak->no_hp = "+62".$no_hp;
+                            
+							$detile_kontak->save();
+							$detile_kepengurusan_dpc->id_anggota = $model->id_anggota;
+							$detile_kepengurusan_dpc->save();
+							$Transaction->commit();
+							$this->sendReportSms($model, 'DPC PKB Garut', $detile_kepengurusan_dpc->jabatan,$detile_kontak->no_hp);
+							return [
+								'forceReload'=>'#crud-datatable-pjax',
+								'title'=> "Create new Anggota",
+								'content'=>'<span class="text-success">Create Anggota success</span>',
+								'footer'=> Html::button('Close',['class'=>'btn btn-default pull-left','data-dismiss'=>"modal"]).
+										Html::a('Create More',['create'],['class'=>'btn btn-primary','role'=>'modal-remote'])
+					
+							];
+						}else{
+							$Transaction->rollBack();
+						}
+						
+					}else if($model->tingkatKepengurusanOptions == Anggota::TINGKAT_KEP_OPT_PAC){
+						$detile_kepengurusan->load($request->post());
+						$detile_kepengurusan_dpc->load($request->post());
+						
+						$nama_foto = $model->no_ktp;
+						$model->file = UploadedFile::getInstance($model, 'file');
+						$model->file->saveAs('file-upload/'.$nama_foto.'.'.$model->file->extension);
+						$model->foto = 'file-upload/'.$nama_foto.'.'.$model->file->extension;
+						
+						if($model->save()){
+							$detile_kontak->id_anggota = $model->id_anggota;
+                            $no_hp = substr($detile_kontak->no_hp, 1);
+                            $detile_kontak->no_hp = "+62".$no_hp;
 
-                        $detile_kepengurusan->id_anggota = $model->id_anggota;
-                        $detile_kepengurusan->save();
+							$detile_kontak->save();
 
-                        $Transaction->commit();
-                        return [
-                            'forceReload'=>'#crud-datatable-pjax',
-                            'title'=> "Create new Anggota",
-                            'content'=>'<span class="text-success">Create Anggota success</span>',
-                            'footer'=> Html::button('Close',['class'=>'btn btn-default pull-left','data-dismiss'=>"modal"]).
-                                    Html::a('Create More',['create'],['class'=>'btn btn-primary','role'=>'modal-remote'])
-                
-                        ];
-                    }else{
-                        $Transaction->rollBack();
-                    }
+							$detile_kepengurusan->id_anggota = $model->id_anggota;
+							$pac = AnakCabang::find()->where(['id'=>$detile_kepengurusan->pac])->one();
+							$detile_kepengurusan->save();
+							$this->sendReportSms($model, $pac->nama, $detile_kepengurusan->jabatan,$detile_kontak->no_hp);
+							$Transaction->commit();
+							return [
+								'forceReload'=>'#crud-datatable-pjax',
+								'title'=> "Create new Anggota",
+								'content'=>'<span class="text-success">Create Anggota success</span>',
+								'footer'=> Html::button('Close',['class'=>'btn btn-default pull-left','data-dismiss'=>"modal"]).
+										Html::a('Create More',['create'],['class'=>'btn btn-primary','role'=>'modal-remote'])
+					
+							];
+						}else{
+							$Transaction->rollBack();
+						}
+					}
+                    
                 }catch(\Exception $e){
                     $Transaction->rollBack();
                     throw $e;
@@ -246,6 +310,7 @@ class AnggotaController extends Controller
             if($request->isGet){
                 return [
                     'title'=> "Update Anggota #".$id,
+					'size'=>'large',
                     'content'=>$this->renderAjax('update', [
                         'model' => $model,
                         'listKecamatan'=>$listKecamatan,
@@ -402,4 +467,20 @@ class AnggotaController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+	
+	protected function sendReportSms($model, $tingkatKepengurusan, $jabatan, $no_telp){
+		$message = "Assalamu'alaikum ".$model->nama_anggota."! \n anda telah terdaftar di sistem informasi PKB. \n by. admin";
+		$out = new Outbox();
+		$now = new \DateTime();
+    	$time = $now->format('Y-m-d H:i:s');
+		$out->SendingDateTime = $time;
+		$out->TextDecoded = $message;
+        $out->DestinationNumber = $no_telp;
+		if($out->save(false)){
+			Yii::$app->session->setFlash('Success', "SMS telah Konfirmasi dikirim ke ".$model->nama_anggota);
+			
+		}else{
+			Yii::$app->session->setFlash('Success', "SMS Gaga Gagal dikirim ke ".$model->nama_anggota);
+		}
+	}
 }

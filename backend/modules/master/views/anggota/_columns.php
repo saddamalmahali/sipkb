@@ -1,5 +1,6 @@
 <?php
 use yii\helpers\Url;
+use app\modules\master\models\Kecamatan;
 
 return [
     [
@@ -22,7 +23,15 @@ return [
     ],
     [
         'class'=>'\kartik\grid\DataColumn',
-        'attribute'=>'tempat_lahir',
+        'attribute'=>'kecamatan',
+         
+        'value'=>function($model){
+            $IDKecamatan = $model->kecamatan;
+            $kecamatan = Kecamatan::findOne($IDKecamatan);
+
+            return $kecamatan->Nama;
+
+        },
         'hAlign'=>'center'
     ],
 

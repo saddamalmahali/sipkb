@@ -1,10 +1,10 @@
 <?php
 # CONFIGURATION
 //they can be defined or not. if not, interface will give login form
-//$db_serv="127.0.0.1";
-//$db_user="root";
-//$db_pass="";
-//$db_name="smsd"
+$db_serv="127.0.0.1";
+$db_user="root";
+$db_pass="";
+$db_name="sipkb"
 
 //these must be defined
 $dokument="admin.php"; //name of current document

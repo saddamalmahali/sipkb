@@ -23,6 +23,14 @@ CrudAsset::register($this);
             'dataProvider' => $dataProvider,
             'filterModel' => $searchModel,
             'pjax'=>true,
+			'panelFooterTemplate'=> 
+				'<div class="kv-panel-pager">
+				<center>{pager}</center>
+				</div>
+				{footer}
+				
+				<div class="clearfix"></div>
+				', 
             'columns' => require(__DIR__.'/_columns.php'),
             'toolbar'=> [
                 ['content'=>
@@ -41,19 +49,6 @@ CrudAsset::register($this);
                 'type' => 'success', 
                 'heading' => '<i class="glyphicon glyphicon-list"></i> '.$this->title,
                 
-                'after'=>BulkButtonWidget::widget([
-                            'buttons'=>Html::a('<i class="glyphicon glyphicon-trash"></i>&nbsp; Delete All',
-                                ["bulk-delete"] ,
-                                [
-                                    "class"=>"btn btn-danger btn-xs",
-                                    'role'=>'modal-remote-bulk',
-                                    'data-confirm'=>false, 'data-method'=>false,// for overide yii data api
-                                    'data-request-method'=>'post',
-                                    'data-confirm-title'=>'Are you sure?',
-                                    'data-confirm-message'=>'Are you sure want to delete this item'
-                                ]),
-                        ]).                        
-                        '<div class="clearfix"></div>',
             ]
         ])?>
     </div>

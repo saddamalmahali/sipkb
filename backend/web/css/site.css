@@ -1,6 +1,7 @@
 html,
 body {
     height: 100%;
+    font-size: 14px;
 }
 
 .wrap {
@@ -102,4 +103,9 @@ a.desc:after {
 
 .nav > li > form > button:hover {
     text-decoration: none;
+}
+
+
+#container-lapor{
+    
 }

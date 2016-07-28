@@ -8,6 +8,8 @@ use app\modules\master\models\Anggota;
 use app\modules\master\models\AnggotaDetileKontakLink;
 use app\modules\master\models\DetileKontak;
 use common\models\Outbox;
+use app\models\LaporSms;
+use app\models\InboxTest;
 use app\models\FormSms;
 use common\models\InboxSearch;
 use yii\web\Controller;
@@ -37,6 +39,7 @@ class PesanController extends Controller
      */
     public function actionIndex()
     {
+        /*
         $searchModel = new InboxSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -44,6 +47,17 @@ class PesanController extends Controller
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
+        */
+        
+        
+        
+        return $this->render('index');
+    }
+    
+    public function actionAmbilDataLastLapor(){
+        $lapor = new LaporSms();
+        
+        return $lapor->getLastLapor();
     }
 
     public function actionTulisPesan(){
@@ -63,9 +77,127 @@ class PesanController extends Controller
 
 
     }
+	
+	public function sendReportSms($model, $tingkatKepengurusan, $jabatan, $no_telp){
+		$message = "Assalamu'alaikum ".$model->nama_anggota."! anda telah terdaftar di sistem informasi PKB, dan anda termasuk pengurus ".$tingkatKepengurusan.", dengan jabatan ".$jabatan;
+		$out = new Outbox();
+		$out->TextDecoded = $msg;
+        $out->DestinationNumber = $message->SenderNumber;
+		if($out->save){
+			Yii::$app->session->setFlash('Success', "SMS telah Konfirmasi dikirim ke ".$model->nama_anggota);
+			
+			return;
+		}
+	}
+	
+	
 
     public function actionMessage_routine(){
-        if($messages = Inbox::find()->where(['Processed'=>'false'])->all()){
+		
+		print('Service Pesan dijalankan');
+		
+		if($messages = Inbox::find()->where(['Processed'=>'false'])->all())
+		{
+			Yii::$app->session->setFlash('success', 'Ada Pesan Baru Diterima');
+			echo "sukses";
+			$ct = 0;
+			$gabung = "";
+			$kode = '';
+			$kode_gabung = '';
+			$jumlah_part = '';
+			$part = '';
+			foreach($messages as $message){
+				
+				$inbox = new InboxTest();
+				$inboxUpdate = $this->findModel($message->ID);
+				
+				/*
+				if($message->UDH != ''){
+					$ct = $ct+1;
+					$kode = substr($message->UDH, 0, 5);
+					if($kode_gabung == ''){
+						$kode_gabung = substr($message->UDH, 5, 3);
+					}
+					
+					$kode_gabung2 = substr($message->UDH, 5, 3);
+					$jumlah_part = substr($message->UDH, 8, 2);
+					$part = substr($message->UDH, 10, 2);
+					echo "<br />".$kode;
+					echo "<br />".$kode_gabung;
+					echo "<br />".$jumlah_part;
+					echo "<br />".$part;
+					
+					if($kode_gabung == $kode_gabung2){
+						continue ;
+					}
+					
+					$kode_gabung = '';
+					echo "<br />Pesan berisi ". $ct;
+				}
+				
+				echo "selesai";
+				*/
+				if(!is_null($inboxUpdate))
+				{
+					$pesan  = strtoupper($message->TextDecoded);
+
+					$pecah = explode("#", $pesan);
+					$msg = '';
+					
+					if($pecah[0] == 'LAPOR'){
+						$no_hp = $message->SenderNumber;
+						$kontak = DetileKontak::find()->where(['no_hp'=>$no_hp])->one();
+						echo "\nService Lapor dijalankan...";
+						if(!is_null($kontak)){
+							echo "\nKontak Ditemukan...";
+							$anggota = Anggota::find()->where(['id_anggota'=>$kontak->id_anggota])->one();
+							if(!is_null($anggota)){
+								echo "\nAnggota Ditemukan...";
+								$lapor = new LaporSms();
+								$lapor->tanggal = $message->ReceivingDateTime;
+								$lapor->pengirim = $message->SenderNumber;
+								$lapor->pesan = $pecah[1];
+								if($lapor->save()){
+									echo "\nLapor telah disimpan...";
+									$inboxUpdate->Processed = 'true';
+									$inboxUpdate->save(false);
+									echo "Berhasil mengubah data dengan id="+$inboxUpdate->ID;
+								}else{
+									echo "\nLapor Gagal disimpan...";
+								}
+							}else{
+								echo "\nAnggota tidak ditemukan...";
+							}
+						}else{
+							echo "\nKontak tidak ditemukan...";
+						}
+						
+					}else{
+						$inbox->tanggal = $message->ReceivingDateTime;
+						$inbox->pengirim = $message->SenderNumber;
+						$inbox->pesan = $message->TextDecoded;
+						if($inbox->save()){
+							$inboxUpdate->Processed = 'true';
+							$inboxUpdate->save(false);
+							echo "Berhasil mengubah data dengan id="+$inboxUpdate->ID;
+						}
+					}
+					
+					
+					
+				}
+				
+				
+				
+			}
+			
+			
+		}
+		
+		
+		
+        /*
+		if($messages = Inbox::find()->where(['Processed'=>'false'])->all()){
             echo "Data Diterima";
             foreach ($messages as $message) {
                 echo "<p>Data ada</p>";
@@ -130,6 +262,8 @@ class PesanController extends Controller
         }else{
             echo "Tidak ada data yang harus diproses";
         }
+		
+		*/
 
 
     }

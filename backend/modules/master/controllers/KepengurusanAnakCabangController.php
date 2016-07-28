@@ -164,8 +164,12 @@ class KepengurusanAnakCabangController extends Controller
     public function actionUpdate($id)
     {
         $request = Yii::$app->request;
-        $model = $this->findModel($id);       
+        $model = $this->findModel($id);
 
+        $listAnakCabang =  $model->getListAnakCabang();      
+        $modelListAnggota = [new DetileKepengurusan()];
+
+        $listAnggota = $model->getListAnggota();
         if($request->isAjax){
             /*
             *   Process for ajax request
@@ -176,6 +180,9 @@ class KepengurusanAnakCabangController extends Controller
                     'title'=> "Update KepengurusanAnakCabang #".$id,
                     'content'=>$this->renderAjax('update', [
                         'model' => $model,
+                        'listAnakCabang'=>$listAnakCabang,
+                        'modelListAnggota'=>empty($modelListAnggota) ? [new DetileKepengurusan()]:$modelListAnggota,
+                        'listAnggota'=>$listAnggota,
                     ]),
                     'footer'=> Html::button('Close',['class'=>'btn btn-default pull-left','data-dismiss'=>"modal"]).
                                 Html::button('Save',['class'=>'btn btn-primary','type'=>"submit"])
@@ -186,6 +193,7 @@ class KepengurusanAnakCabangController extends Controller
                     'title'=> "KepengurusanAnakCabang #".$id,
                     'content'=>$this->renderAjax('view', [
                         'model' => $model,
+
                     ]),
                     'footer'=> Html::button('Close',['class'=>'btn btn-default pull-left','data-dismiss'=>"modal"]).
                             Html::a('Edit',['update','id'=>$id],['class'=>'btn btn-primary','role'=>'modal-remote'])
@@ -195,6 +203,9 @@ class KepengurusanAnakCabangController extends Controller
                     'title'=> "Update KepengurusanAnakCabang #".$id,
                     'content'=>$this->renderAjax('update', [
                         'model' => $model,
+                        'listAnakCabang'=>$listAnakCabang,
+                        'modelListAnggota'=>empty($modelListAnggota) ? [new DetileKepengurusan()]:$modelListAnggota,
+                        'listAnggota'=>$listAnggota,
                     ]),
                     'footer'=> Html::button('Close',['class'=>'btn btn-default pull-left','data-dismiss'=>"modal"]).
                                 Html::button('Save',['class'=>'btn btn-primary','type'=>"submit"])

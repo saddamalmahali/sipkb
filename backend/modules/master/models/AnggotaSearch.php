@@ -48,6 +48,9 @@ class AnggotaSearch extends Anggota
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'sort'=>false,
+			'pagination'=>[
+				'pageSize'=>6,
+			]
         ]);
 
         $this->load($params);
@@ -66,6 +69,9 @@ class AnggotaSearch extends Anggota
             'tanggal_lahir' => $this->tanggal_lahir,
         ]);
 
+
+        $query->orderBy(['id_anggota'=>'SORT_DESC']);
+        
         $query->andFilterWhere(['like', 'nama_anggota', $this->nama_anggota])
             ->andFilterWhere(['like', 'jenis_kelamin', $this->jenis_kelamin])
             ->andFilterWhere(['like', 'tempat_lahir', $this->tempat_lahir])
@@ -75,6 +81,8 @@ class AnggotaSearch extends Anggota
             ->andFilterWhere(['like', 'no_ktp', $this->no_ktp])
             ->andFilterWhere(['like', 'status', $this->status])
             ->andFilterWhere(['like', 'detile_kontak.no_hp', $this->kontak]);
+
+
 
         return $dataProvider;
     }

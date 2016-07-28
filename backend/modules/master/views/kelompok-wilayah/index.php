@@ -70,7 +70,7 @@ $this->params['breadcrumbs'][] = $this->title;
     $js = <<< JS
     $(document).on('click', '.button-tambah', function(e){
         e.preventDefault();
-
+        $('#modal-wilayah').find('.modal-header').html('<center><h4>Tambah Kelompok Wilayah</h4></center>');
         $('#modal-wilayah').modal('show').find('.modal-wilayah-body')
                     .load($(this).attr('value'));
     });

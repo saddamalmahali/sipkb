@@ -1,6 +1,7 @@
 <?php
 use yii\helpers\Html;
 
+
 /* @var $this \yii\web\View */
 /* @var $content string */
 
@@ -15,7 +16,7 @@ if (Yii::$app->controller->action->id === 'login') {
         ['content' => $content]
     );
 } else {
-
+	
     if (class_exists('backend\assets\AppAsset')) {
         backend\assets\AppAsset::register($this);
     } else {
@@ -34,6 +35,7 @@ if (Yii::$app->controller->action->id === 'login') {
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <?= Html::csrfMetaTags() ?>
         <title><?= Html::encode($this->title) ?></title>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
         <?php $this->head() ?>
     </head>
     <body class="hold-transition skin-green sidebar-mini">

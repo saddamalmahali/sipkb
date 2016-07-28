@@ -11,28 +11,34 @@ $this->params['breadcrumbs'][] = ['label' => 'Detile Kepengurusans', 'url' => ['
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="detile-kepengurusan-view">
+    <div class="panel panel-success">
+        <div class="panel-heading"><?= Html::encode($this->title) ?></div>
+        <div class="panel-body">
+            <p>
+                <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+                <?= Html::a('Delete', ['delete', 'id' => $model->id], [
+                    'class' => 'btn btn-danger',
+                    'data' => [
+                        'confirm' => 'Are you sure you want to delete this item?',
+                        'method' => 'post',
+                    ],
+                ]) ?>
+            </p>
 
-    <h1><?= Html::encode($this->title) ?></h1>
+            <?= DetailView::widget([
+                'model' => $model,
+                'attributes' => [
+                    'id',
+                    'id_kepengurusan',
+                    'id_anggota',
+                    'jabatan',
+                ],
+            ]) ?>
+        </div>
 
-    <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
+    </div>
+    <h1></h1>
 
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id',
-            'id_kepengurusan',
-            'id_anggota',
-            'jabatan',
-        ],
-    ]) ?>
+    
 
 </div>

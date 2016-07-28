@@ -6,7 +6,7 @@ use kartik\widgets\DatePicker;
 use yii\bootstrap\Tabs;
 use kartik\widgets\DepDrop;
 use yii\helpers\Url;
-
+use kartik\widgets\FileInput;
 /* @var $this yii\web\View */
 /* @var $model app\modules\master\models\Anggota */
 /* @var $form yii\widgets\ActiveForm */
@@ -16,93 +16,114 @@ use yii\helpers\Url;
     <?php $form = ActiveForm::begin([
         'id' => 'anggota-form',
     ]); ?>
-    <div>
+    <div class="row">
+	
+		<div class="col-md-8 col-xs-6">
+			  <ul class="nav nav-tabs" role="tablist">
+				<li role="presentation" class="active"><a href="#data-umum" aria-controls="data-umum" role="tab" data-toggle="tab"><span class="fa fa-bars"></span>&nbsp;&nbsp;&nbsp;Data Umum</a></li>
+				<li role="presentation"><a href="#kontak" aria-controls="kontak" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-modal-window"></span>&nbsp;&nbsp;&nbsp;Kontak</a></li>
+				<li role="presentation"><a href="#wilayah" aria-controls="wilayah" role="tab" data-toggle="tab"><span class="fa fa-map-marker"></span>&nbsp;&nbsp;&nbsp;Penempatan Wilayah</a></li>
+			  </ul>
 
+			  <!-- Tab panes -->
+			  <div class="tab-content">
+				<div role="tabpanel" class="tab-pane active" id="data-umum">
+					<div class="row">
+						<div class="col-md-6">
+							
+
+							<?= $form->field($model, 'nama_anggota')->textInput(['maxlength' => true]) ?>
+
+							<?= $form->field($model, 'jenis_kelamin')->dropDownList([ 'laki-laki' => 'Laki-laki', 'perempuan' => 'Perempuan', ], ['prompt' => '']) ?>
+
+							<?= $form->field($model, 'tempat_lahir')->textInput(['maxlength' => true]) ?>
+
+							<?= $form->field($model, 'tanggal_lahir')->widget(DatePicker::classname(), [
+								'value'=>date('yyyy-mm-dd', strtotime('+2 days')),
+								'options'=>['placeholder'=>'Pilih Tanggal'],
+								'pluginOptions'=>[
+									'format'=>'yyyy-mm-dd',
+									'autoclose'=>true,
+									'todayHighlight'=>true
+								]
+							]) ?>
+						</div>
+						<div class="col-md-6">            
+
+							<?= $form->field($model, 'no_ktp')->textInput(['maxlength' => true]) ?>
+
+							<?= $form->field($model, 'kecamatan')->widget(Select2::classname(), [
+								'data'=>$listKecamatan,
+								'options'=>[
+									'placeholder'=> 'Pilih Kecamatan'
+								],
+								'pluginOptions'=>[
+									'allowClear'=>true
+								]
+							]) ?>
+
+							<?= $form->field($model, 'alamat_anggota')->textArea(['rows'=>5]) ?>
+						</div>
+					</div>
+				</div>
+				<div role="tabpanel" class="tab-pane" id="kontak">
+					<div class="col-md-12">
+						<?= $form->field($detile_kontak, 'no_hp')->textInput(['maxlength'=>true]) ?>
+						<?= $form->field($detile_kontak, 'email')->textInput(['maxlength'=>true]) ?>
+						<?= $form->field($detile_kontak, 'no_rumah')->textInput(['maxlength'=>true]) ?>                
+					</div>            
+				</div>
+				<div role="tabpanel" class="tab-pane" id="wilayah">
+					<?= $form->field($detile_kepengurusan, 'pac')->widget(Select2::classname(), [
+						
+						'data'=>$listPac,
+						
+						'options'=>['placeholder'=>'Pilih PAC', 'id'=>'pac-id', 'disabled' => true],
+						'pluginOptions'=>[
+							'allowClear'=>true,
+						]
+					]) ?>
+
+					<?= $form->field($detile_kepengurusan, 'id_kepengurusan' )->widget(Select2::classname(), [
+						
+						'data'=>$listKep,
+						'options'=>['placeholder'=>'Pilih Kepengurusan', 'disabled' => true],
+						'pluginOptions'=>[
+							'allowClear'=>true,
+						]
+					]) ?>
+
+					
+
+					<?= $form->field($detile_kepengurusan, 'jabatan')->textInput(['maxlength' => true]) ?>
+					
+				</div>
+				
+			  </div>
+
+			</div>
+		
+		
+		<div class="col-md-4">
+			<?= $form->field($model, 'file')->widget(FileInput::classname(), [
+				'name' => 'attachments', 
+				'options' => ['multiple' => true, 'placeholder'=>"Pilih Foto"], 
+				'pluginOptions' => [
+				
+					'previewFileType' => 'jpg',
+					'showCaption' => true,
+					'showRemove' => false,
+					'showUpload' => false,
+					
+				]
+			])->label(false) ?>
+		
+		</div>
       <!-- Nav tabs -->
-      <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" class="active"><a href="#data-umum" aria-controls="data-umum" role="tab" data-toggle="tab"><span class="fa fa-bars"></span>&nbsp;&nbsp;&nbsp;Data Umum</a></li>
-        <li role="presentation"><a href="#kontak" aria-controls="kontak" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-modal-window"></span>&nbsp;&nbsp;&nbsp;Kontak</a></li>
-        <li role="presentation"><a href="#wilayah" aria-controls="wilayah" role="tab" data-toggle="tab"><span class="fa fa-map-marker"></span>&nbsp;&nbsp;&nbsp;Penempatan Wilayah</a></li>
-      </ul>
-
-      <!-- Tab panes -->
-      <div class="tab-content">
-        <div role="tabpanel" class="tab-pane active" id="data-umum">
-            <div class="row">
-                <div class="col-md-6">
-                    
-
-                    <?= $form->field($model, 'nama_anggota')->textInput(['maxlength' => true]) ?>
-
-                    <?= $form->field($model, 'jenis_kelamin')->dropDownList([ 'laki-laki' => 'Laki-laki', 'perempuan' => 'Perempuan', ], ['prompt' => '']) ?>
-
-                    <?= $form->field($model, 'tempat_lahir')->textInput(['maxlength' => true]) ?>
-
-                    <?= $form->field($model, 'tanggal_lahir')->widget(DatePicker::classname(), [
-                        'value'=>date('yyyy-mm-dd', strtotime('+2 days')),
-                        'options'=>['placeholder'=>'Pilih Tanggal'],
-                        'pluginOptions'=>[
-                            'format'=>'yyyy-mm-dd',
-                            'autoclose'=>true,
-                            'todayHighlight'=>true
-                        ]
-                    ]) ?>
-                </div>
-                <div class="col-md-6">            
-
-                    <?= $form->field($model, 'no_ktp')->textInput(['maxlength' => true]) ?>
-
-                    <?= $form->field($model, 'kecamatan')->widget(Select2::classname(), [
-                        'data'=>$listKecamatan,
-                        'options'=>[
-                            'placeholder'=> 'Pilih Kecamatan'
-                        ],
-                        'pluginOptions'=>[
-                            'allowClear'=>true
-                        ]
-                    ]) ?>
-
-                    <?= $form->field($model, 'alamat_anggota')->textArea(['rows'=>5]) ?>
-                </div>
-            </div>
-        </div>
-        <div role="tabpanel" class="tab-pane" id="kontak">
-            <div class="col-md-12">
-                <?= $form->field($detile_kontak, 'no_hp')->textInput(['maxlength'=>true]) ?>
-                <?= $form->field($detile_kontak, 'email')->textInput(['maxlength'=>true]) ?>
-                <?= $form->field($detile_kontak, 'no_rumah')->textInput(['maxlength'=>true]) ?>                
-            </div>            
-        </div>
-        <div role="tabpanel" class="tab-pane" id="wilayah">
-            <?= $form->field($detile_kepengurusan, 'pac')->widget(Select2::classname(), [
-                
-                'data'=>$listPac,
-                'options'=>['placeholder'=>'Pilih PAC', 'id'=>'pac-id'],
-                'pluginOptions'=>[
-                    'allowClear'=>true,
-                ]
-            ]) ?>
-
-            <?= $form->field($detile_kepengurusan, 'id_kepengurusan')->widget(Select2::classname(), [
-                
-                'data'=>$listKep,
-                'options'=>['placeholder'=>'Pilih Kepengurusan'],
-                'pluginOptions'=>[
-                    'allowClear'=>true,
-                ]
-            ]) ?>
-
-            
-
-            <?= $form->field($detile_kepengurusan, 'jabatan')->textInput(['maxlength' => true]) ?>
-            <?= $detile_kepengurusan->pac ?>
-        </div>
-        
-      </div>
-
-    </div>
-
-    
+      
+		</div>
+	</div>
+  
     
 
   

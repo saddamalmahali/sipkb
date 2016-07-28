@@ -1,6 +1,7 @@
 <?php
 use yii\widgets\Breadcrumbs;
 use kartik\widgets\Growl;
+use yii\widgets\Pjax;
 
 ?>
 <div class="content-wrapper">
@@ -16,7 +17,7 @@ use kartik\widgets\Growl;
 
         
     </section>
-
+	<?php Pjax::begin(['id'=>'content-flash']);?>
     <section class="content">
         <?php if(Yii::$app->session->hasFlash('success')){ ?>
 
@@ -40,6 +41,7 @@ use kartik\widgets\Growl;
         <?php } ?>
         <?= $content ?>
     </section>
+	<?php Pjax::end(); ?>
 </div>
 
 <footer class="main-footer">

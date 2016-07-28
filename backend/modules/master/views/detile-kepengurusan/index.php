@@ -34,6 +34,18 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
+		'panelFooterTemplate'=> 
+			'<div class="kv-panel-pager">
+			<center>{pager}</center>
+			</div>
+			{footer}
+			
+			<div class="clearfix"></div>
+			'
+			
+			
+		, 
+		
         'panel'=>[
             'heading'=>'<center><b>'.$this->title.'</b></center>',
             'before'=>'<div class="col-md-6 pull-left">'.$this->render('_search', ['model' => $searchModel]).'</div>'.'<div class="pull-right">'.Html::button('<span class="fa fa-plus"></span>', ['value'=>Url::to(['/master/detile-kepengurusan/create']),'class' => 'btn btn-success button-tambah',]).'</div>',
