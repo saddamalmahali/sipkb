@@ -24,15 +24,19 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php Modal::end(); ?>
 	
 	<div class='row'>
-		<div class='col-md-12'>
+		<div class='col-md-8'>
 			<div class='box'>
 				<div class='box-header with-border'>
-					<center><h3><?= Html::encode($this->title) ?></h3></center>
+					<center><h3 class="box-title"><?= Html::encode($this->title) ?></h3></center>
+					
+					<div class="box-tools pull-right">
+						<?= Html::button('<span class="fa fa-plus"></span>', ['value'=>Url::to('./kepengurusan-dpc/create'),'class' => 'btn btn-box-tool button-tambah pull-right', ]) ?>
+					</div>
 				</div>
 				<div class='box-body'>
 					<div class='row'>
 						<div class='col-md-12'>
-							<?= Html::button('<span class="fa fa-plus"></span> &nbsp; Tambah ', ['value'=>Url::to('./kepengurusan-dpc/create'),'class' => 'btn btn-success button-tambah pull-right',]) ?>
+							
 						</div>
 					</div>
 					
@@ -40,10 +44,10 @@ $this->params['breadcrumbs'][] = $this->title;
 					 <?= GridView::widget([
 						'dataProvider' => $dataProvider,
 						'filterModel' => $searchModel,
-						
+						'hover'=>true,
 						'columns' => [
 							['class' => 'yii\grid\SerialColumn'],
-
+							['class' => 'yii\grid\CheckboxColumn'],
 							//'id',
 							[
 								'attribute'=>'id_kepengurusan',

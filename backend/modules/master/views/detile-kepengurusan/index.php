@@ -10,7 +10,7 @@ use yii\widgets\Pjax;
 /* @var $searchModel app\modules\master\models\DetileKepengurusanSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Detile Kepengurusan Anak Cabang';
+$this->title = 'Daftar Kepengurusan Anak Cabang';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="detile-kepengurusan-index">
@@ -72,7 +72,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 'hAlign'=>'center',
             ],
 
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+				'class' => 'kartik\grid\ActionColumn',
+				'template'=> '{view} {update} {delete}',
+				'updateOptions'=>[
+					'role'=>'modal-update-detile-kepengurusan',
+					'title'=>'Update',
+					'data-toggle'=>'tooltip',
+					'data-target'=>'#modal-wilayah',
+				],
+			],
         ],
     ]); ?>
 
@@ -83,12 +92,13 @@ $this->params['breadcrumbs'][] = $this->title;
     $js = <<< JS
     $(document).on('click', '.button-tambah', function(e){
         e.preventDefault();
-
+		
         $('#modal-wilayah').find('.modal-header').html('<center><h4>Tambah Pengurus</h4></center>');
 
         $('#modal-wilayah').modal('show').find('.modal-wilayah-body')
                     .load($(this).attr('value'));
     });
+	
 JS;
     $this->registerJs($js);
 

@@ -7,7 +7,7 @@ use yii\helpers\Html;
 /* @var $model app\modules\master\models\DetileKepengurusan */
 
 $this->title = 'Tambah Pengurus';
-$this->params['breadcrumbs'][] = ['label' => 'Detile Kepengurusans', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Daftar Kepengurusan Anak Cabang', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="detile-kepengurusan-create">

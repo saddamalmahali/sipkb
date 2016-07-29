@@ -126,12 +126,17 @@ class DetileKepengurusanController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+		$listPac = $model->getListPac();
+        $listAnggota = $model->getListAnggota();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
+			
         } else {
             return $this->render('update', [
                 'model' => $model,
+				'listPac'=>$listPac,
+                'listAnggota'=>$listAnggota,
             ]);
         }
     }

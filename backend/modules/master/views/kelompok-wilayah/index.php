@@ -9,7 +9,7 @@ use yii\helpers\Url;
 /* @var $searchModel app\modules\master\models\KelompokWilayahSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Kelompok Wilayahs';
+$this->title = 'Daftar Kelompok Wilayah';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="kelompok-wilayah-index">

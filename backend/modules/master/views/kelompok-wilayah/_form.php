@@ -19,7 +19,7 @@ use yii\helpers\Url;
 
     <?= $form->field($model, 'nama_kelompok')->textInput(['maxlength' => true]) ?>
 
-    <div class="modal-footer">
+    <div class="box-footer">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>
 
